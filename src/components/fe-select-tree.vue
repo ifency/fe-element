@@ -8,8 +8,8 @@
       :disabled="disabled"
       :placement="placement"
       :width="popverWidth"
-      @after-leave="handleScroll()"
     >
+      <!-- @after-leave="handleScroll()" -->
       <el-scrollbar
         wrap-class="el-select-dropdown__wrap"
         view-class="el-select-dropdown__list"
@@ -24,7 +24,6 @@
           :style="{ 'min-width': minWidth + 'px' }"
           @node-click="nodeClick"
           @check-change="checkChange"
-          @transitionend.native="$refs.elPopover.updatePoper()"
           :data="data"
           :props="props"
           :node-key="propsValue"
@@ -149,8 +148,8 @@ export default {
       type: [Number, String, Array],
       default: "",
     },
-    // popover的宽度
-    popoverWidth: Number,
+    // // popover的宽度
+    // popoverWidth: Number,
   },
   emits: ["update:modelValue"],
   computed: {
@@ -165,10 +164,16 @@ export default {
     return {
       visible: false,
       selectedLabel: "",
+      popverWidth: "320",
     };
   },
   mounted() {
     this.setSelected();
+    // 更新popver的宽度
+    this.$nextTick(() => {
+      const { width } = this.$refs.reference.$el.getBoundingClientRect();
+      this.popverWidth = width;
+    });
   },
   watch: {
     modelValue() {
@@ -180,23 +185,49 @@ export default {
   },
   methods: {
     valueChange(value, node) {
+      console.log(
+        "🚀 ~ file: fe-select-tree.vue ~ line 188 ~ valueChange ~ value, node",
+        value,
+        node
+      );
+      this.$emit("update:modelValue", value);
       this.$emit("change", value, node);
     },
     nodeClick(data, node, component) {
       const children = data[this.props.children];
+      console.log(
+        "🚀 ~ file: fe-select-tree.vue ~ line 193 ~ nodeClick ~ children",
+        children
+      );
       const value = data[this.propsValue];
+      console.log(
+        "🚀 ~ file: fe-select-tree.vue ~ line 194 ~ nodeClick ~ value",
+        value
+      );
+      console.log(
+        "🚀 ~ file: fe-select-tree.vue ~ line 214 ~ nodeClick ~ this.value",
+        this.modelValue
+      );
+      console.log(
+        "🚀 ~ file: fe-select-tree.vue ~ line 202 ~ nodeClick ~ this.multiple",
+        this.multiple
+      );
       if (
         ((children && children.length) ||
           (this.lazy && !data[this.propsIsLeaf])) &&
         !this.checkStrictly
       ) {
-        component.handleExpandIconClick();
+        component.ctx.handleExpandIconClick();
       } else if (!this.multiple && !data.disabled) {
-        if (value !== this.value) {
+        if (value !== this.modelValue) {
           this.valueChange(value, data);
           this.selectedLabel = data[this.propsLabel];
         }
         this.visible = false;
+        console.log(
+          "🚀 ~ file: fe-select-tree.vue ~ line 207 ~ nodeClick ~ this.visible",
+          this.visible
+        );
       }
     },
     setSelected() {

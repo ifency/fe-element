@@ -8,7 +8,7 @@
     "lint": "eslint \"src/**/*.{js,vue}\""
   },
   "dependencies": {
-    "element-plus": "^1.0.2-beta.58",
+    "element-plus": "1.0.2-beta.70",
     "vue": "3.1.5"
   },
   "devDependencies": {

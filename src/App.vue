@@ -8,7 +8,7 @@
       node-key="id"
       :data="treeData"
       :props="treeProps"
-      :modelValue="value"
+      v-model="value"
     ></fe-select-tree>
     <el-input v-model="value"></el-input>
   </div>
